@@ -27,17 +27,23 @@ class Miner(BaseMinerNeuron):
         repo_root = Path(__file__).resolve().parents[1]
         model_path = repo_root / "models" / "poker44_xgb_calibrated.joblib"
         self.predictor = Poker44Model(str(model_path))
+        implementation_files = [
+            Path(__file__).resolve(),
+            repo_root / "poker44_ml" / "inference.py",
+            repo_root / "poker44_ml" / "features.py",
+            repo_root / "training" / "train_model.py",
+        ]
 
         self.model_manifest = build_local_model_manifest(
             repo_root=repo_root,
-            implementation_files=[Path(__file__).resolve()],
+            implementation_files=implementation_files,
             defaults={
-                "model_name": "poker44-xgb-calibrated",
+                "model_name": "poker44-random-forest-calibrated",
                 "model_version": "1",
-                "framework": self.predictor.metadata.get("framework", "xgboost+sklearn"),
+                "framework": self.predictor.metadata.get("framework", "sklearn-random-forest"),
                 "license": "MIT",
                 "repo_url": "https://github.com/Poker44/Poker44-subnet",
-                "notes": "Chunk-level tabular model with calibrated probabilities.",
+                "notes": "Chunk-level calibrated random-forest miner with manifest disclosures.",
                 "open_source": True,
                 "inference_mode": "remote",
                 "training_data_statement": (
